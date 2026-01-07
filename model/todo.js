@@ -1,6 +1,4 @@
-import { max } from 'date-fns';
 import mongoose from 'mongoose';
-import { trim } from 'zod';
 
 const TodoSchema = new mongoose.Schema(
   {

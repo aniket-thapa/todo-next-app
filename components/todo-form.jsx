@@ -1,0 +1,141 @@
+'use client';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createTodoSchema } from '@/validations/todo';
+import { createTodo } from '@/actions/todo-actions';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useCreateTodo } from '@/hooks/use-create-todo';
+import { toast } from 'sonner';
+import { size } from 'zod';
+
+const TodoForm = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const createTodoMutation = useCreateTodo();
+
+  const form = useForm({
+    resolver: zodResolver(createTodoSchema),
+    defaultValues: {
+      title: '',
+      description: '',
+      priority: 'medium',
+    },
+  });
+
+  const onSubmit = async (data) => {
+    try {
+      const result = await createTodoMutation.mutateAsync(data);
+      if (result.success) {
+        toast.success('Todo created successfully!');
+        form.reset();
+        setIsOpen(false);
+      } else {
+        toast.error(`Failed to create todo: ${result.error}`);
+      }
+    } catch (error) {
+      toast.error('Failed to create todo');
+    }
+
+    if (!isOpen) {
+      return (
+        <Button
+          onClick={() => setIsOpen(true)}
+          className="w-full, mb-6"
+          size="lg"
+        >
+          Add New Todo
+        </Button>
+      );
+    }
+  };
+  return (
+    <Card className="mb-6 w-full max-w-lg mx-auto">
+      <CardHeader>
+        <CardTitle>Create a New Todo</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form
+          id="todo-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
+          <div className="mb-4">
+            <Label htmlFor="title">
+              Title<span className="text-red-500">*</span>
+            </Label>
+            <Input
+              id="title"
+              {...form.register('title')}
+              placeholder="Enter todo title"
+            />
+            {form.formState.errors.title && (
+              <p className="text-destructive text-sm mt-1">
+                {form.formState.errors.title.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              {...form.register('description')}
+              placeholder="Enter todo description"
+              rows={3}
+            />
+            {form.formState.errors.description && (
+              <p className="text-destructive text-sm mt-1">
+                {form.formState.errors.description.message}
+              </p>
+            )}
+          </div>
+          <div className="mb-4">
+            <Label htmlFor="priority">Priority</Label>
+            <Select
+              id="priority"
+              onValueChange={(value) => form.setValue('priority', value)}
+              value={form.watch('priority')}
+            >
+              <SelectTrigger id="priority" className="w-full">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="low">Low</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2">
+            <Button type="submit" disabled={createTodoMutation.isPending}>
+              {createTodoMutation.isPending ? 'Creating...' : 'Create Todo'}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setIsOpen(false);
+                form.reset();
+              }}
+              variant="outline"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default TodoForm;
