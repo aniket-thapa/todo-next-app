@@ -47,19 +47,20 @@ const TodoForm = () => {
     } catch (error) {
       toast.error('Failed to create todo');
     }
-
-    if (!isOpen) {
-      return (
-        <Button
-          onClick={() => setIsOpen(true)}
-          className="w-full, mb-6"
-          size="lg"
-        >
-          Add New Todo
-        </Button>
-      );
-    }
   };
+
+  if (!isOpen) {
+    return (
+      <Button
+        onClick={() => setIsOpen(true)}
+        className="w-full, mb-6"
+        size="lg"
+      >
+        Add New Todo
+      </Button>
+    );
+  }
+
   return (
     <Card className="mb-6 w-full max-w-lg mx-auto">
       <CardHeader>

@@ -24,3 +24,20 @@ export async function createTodo(data) {
     };
   }
 }
+
+export async function getTodos() {
+  try {
+    await connectDB();
+    const todos = await Todo.find().sort({ createdAt: -1 });
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(todos)),
+    };
+  } catch (error) {
+    console.error('Error fetching todos:', error);
+    return {
+      success: false,
+      error: error ? error.message : 'Failed to fetch todos',
+    };
+  }
+}
