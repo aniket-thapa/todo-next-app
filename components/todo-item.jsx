@@ -7,9 +7,25 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useToggleTodo } from '@/hooks/use-create-todo';
+import { toast } from 'sonner';
 
 const TodoItem = ({ todo }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const toggleMutation = useToggleTodo();
+
+  const handleToggle = async () => {
+    try {
+      const result = await toggleMutation.mutateAsync(todo._id);
+      if (!result.success) {
+        toast.error('Failed to toggle todo');
+      }
+    } catch (error) {
+      console.error('Error toggling todo:', error);
+      toast.error('An error occurred while toggling the todo');
+    }
+  };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -35,8 +51,8 @@ const TodoItem = ({ todo }) => {
         <div className="flex items-start gap-3">
           <Checkbox
             checked={todo.completed}
-            onCheckedChange={() => {}}
-            className="mt-1"
+            onCheckedChange={handleToggle}
+            className="mt-1 cursor-pointer"
             disabled={false}
           />
           <div className="flex-1 min-w-0">

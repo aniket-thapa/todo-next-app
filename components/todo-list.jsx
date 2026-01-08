@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTodo } from '@/hooks/use-create-todo';
 import { useTodoStore } from '@/store/todo-store';
 
@@ -11,9 +11,29 @@ import { Loader2 } from 'lucide-react';
 import TodoItem from './todo-item';
 
 const TodoList = () => {
-  const { data: todos, isLoading, error } = useTodo();
+  const { data, isLoading, error } = useTodo();
 
-  const filteredTodos = useTodoStore((state) => state.filteredTodos());
+  const todos = useTodoStore((state) => state.todos);
+  const setTodos = useTodoStore((state) => state.setTodos);
+
+  const filter = useTodoStore((state) => state.filter);
+
+  const filteredTodos = useMemo(() => {
+    switch (filter) {
+      case 'completed':
+        return todos.filter((todo) => todo.completed);
+      case 'active':
+        return todos.filter((todo) => !todo.completed);
+      default:
+        return todos;
+    }
+  });
+
+  useEffect(() => {
+    if (data) {
+      setTodos(data);
+    }
+  }, [data, setTodos]);
 
   if (isLoading) {
     return (

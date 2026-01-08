@@ -32,7 +32,7 @@ const TodoFilter = () => {
                 key={option.key}
                 variant={filter === option.key ? 'default' : 'outline'}
                 onClick={() => setFilter(option.key)}
-                className="relative"
+                className="relative cursor-pointer"
               >
                 {option.label}
                 {option.count > 0 && (
