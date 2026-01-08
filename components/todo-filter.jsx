@@ -24,7 +24,7 @@ const TodoFilter = () => {
 
   return (
     <Card className="mb-6">
-      <CardContent className="p-4">
+      <CardContent className="px-4 py-1.5">
         <div className="flex items-center justify-between">
           <div className="flex gap-2">
             {filterOptions.map((option) => (

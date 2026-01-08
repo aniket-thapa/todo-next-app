@@ -5,7 +5,6 @@ import { useTodo } from '@/hooks/use-create-todo';
 import { useTodoStore } from '@/store/todo-store';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 
 import { Loader2 } from 'lucide-react';
 import TodoItem from './todo-item';
